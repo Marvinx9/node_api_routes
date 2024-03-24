@@ -1,3 +1,5 @@
+// importando função para criptografia
+const { hash } = require("bcryptjs");
 // importando o meu AppError
 const AppError = require("../utils/AppError");
 
@@ -20,9 +22,13 @@ class UsersController {
         if(checkUserExist){
             throw new AppError("Email já cadastrado.");
         }
+
+        // encriptando a senha do usuário antes de inserir a linha no db
+        const hashedPassword = await hash(password, 8);
+
         await database.run(
             "INSERT INTO users (name, email, password) VALUES(?, ?, ?)",
-            [name, email, password]
+            [name, email, hashedPassword]
         );
         // se o email não existir no db então retorne o código 201 de sucesso
         return response.status(201).json();
