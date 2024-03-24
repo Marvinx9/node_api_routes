@@ -1,13 +1,16 @@
 require("express-async-errors");
 
 // importando a função database
-const database = require("./database/sqlite");
+const migrationsRun = require("./database/sqlite/migrations");
 
 // chamando todo o módulo express
 const express = require('express');
 
 // carregando todo o arquivo index.js - não foi colocado o /index.js porque por padrão ele já é acesado
 const routes = require("./routes");
+
+// iniciando o migrationsRun
+migrationsRun();
 
 // importando o AppError
 const AppError = require("./utils/AppError");
@@ -21,8 +24,6 @@ app.use(express.json());
 // rodando minhas rotas importadas - inicio
 app.use(routes);
 
-// iniciando o banco de dados
-database();
 
 app.use(( error, request, response, next ) => {
     // verificando se o erro veio do lado cliente ou do meu servidor
