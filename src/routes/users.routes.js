@@ -13,5 +13,7 @@ const usersController = new UsersController();
 // rota raiz da aplicação com apenas o '/' quando chamada, você pode acessar essa rota
 usersRoutes.post("/", usersController.create);
 
+usersRoutes.put("/:id", usersController.update);
+
 // exportando para quem desejar utilizar esse arquivo, poder utilizar
 module.exports = usersRoutes;
