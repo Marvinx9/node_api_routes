@@ -54,6 +54,61 @@ class NotesController {
             links
         });
     }
+
+    // criando método de Delete
+    async delete(request, response) {
+        const { id } = request.params;
+        await knex( "notes" ).where({ id }).delete();
+        await knex( "links" ).where({ note_id: id }).delete();
+        await knex( "tags" ).where({ note_id: id }).delete();
+
+        return response.json();
+    }
+
+    // método para listar as funções
+    async index(request, response) {
+        const { title, user_id, tags } = request.query;
+        let notes;
+        if(tags) {
+            // separando as tags de um texto simples para um vetor separado por vírgula
+            // pegando os parâmetros enviados pelo usuário no campo tags para aplicar o filtro
+            // trim remove os espaços vazios enquanto o => percorre cada elemento-tag do vetor
+            const filterTags = tags.split(',').map(tag => tag.trim());
+
+            notes = await knex("tags")
+            .select([
+                "notes.id",
+                "notes.title",
+                "notes.user_id",
+            ])
+            .where("notes.user_id", user_id)
+            .whereLike( "notes.title", `%${title}%` )
+            // pesquisando baseado na tag
+            // comparando se a tag existe no campo name de tags
+            .whereIn("name", filterTags)
+            .innerJoin("notes", "notes.id", "tags.note_id")
+            .orderBy("notes.title")
+
+        } else {
+            notes = await knex("notes")
+            .where({ user_id })
+            //verifica tanto antes como depois se contém no texto essa palavra
+            .whereLike("title", `%${title}%`)
+            .orderBy("title");
+        }
+
+        // filtro + map para retornar a tag que corresponde ao note.id + tudo de note
+        const userTags = await knex("tags").where({ user_id });
+        const notesWithTags = notes.map( note => {
+            const noteTags = userTags.filter( tag => tag.note_id === note.id);
+            return {
+                ...note,
+                tags: noteTags
+            }
+        });
+
+        return response.json( notesWithTags );
+    }
 }
 
 module.exports = NotesController;
