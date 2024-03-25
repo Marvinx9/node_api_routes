@@ -1,0 +1,19 @@
+// Arquivo padrão de configuração do knex - Query Builder
+// estratégia de knex para o sql
+const path = require('path');
+
+module.exports = {
+  development: {
+    client: 'sqlite3',
+    connection: {
+      filename: path.resolve(__dirname, "src", "database", "database.db")
+    },
+    pool: {
+      afterCreate: (conn, cb) => conn.run("PRAGMA foreign_keys = OFF", cb)
+    },
+    migrations: {
+      directory: path.resolve(__dirname, "src", "database", "knex", "migrations")
+    },
+    useNullAsDefault: true
+  },
+};
