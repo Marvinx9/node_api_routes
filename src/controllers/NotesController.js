@@ -1,4 +1,3 @@
-const { response, request } = require("express");
 const knex = require("../database/knex");
 
 // controller de notas
@@ -15,21 +14,20 @@ class NotesController {
             description,
             user_id
         });
-
         // percorrendo para cada link cadastrado em note_id e retornando um objeto com o código da nota e alterando de link para url
         const linksInsert = links.map(link => {
             return {
-                note_id,
+                note_id: Number(note_id),
                 url: link
             }
         });
-
+        
         await knex("links").insert(linksInsert);
 
         // fazendo o mesmo processo para tags
         const tagsInsert = tags.map(name => {
             return {
-                note_id,
+                note_id: Number(note_id),
                 name,
                 user_id
             }

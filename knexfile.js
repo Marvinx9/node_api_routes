@@ -1,8 +1,7 @@
-// Arquivo padrão de configuração do knex - Query Builder
-// estratégia de knex para o sql
-const path = require('path');
+const path = require("path");
 
 module.exports = {
+
   development: {
     client: 'sqlite3',
     connection: {
