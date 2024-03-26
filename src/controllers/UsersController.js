@@ -38,11 +38,11 @@ class UsersController {
         //pega as informações enviadas pelo usuário
         const { name, email, password, old_password } = request.body;
         // pega o id único do usuário
-        const { id } = request.params;
+        const user_id = request.user.id;
         // inicia o db
         const database = await sqliteConnection();
         // realiza a busca pelo usuário por meio do id
-        const user = await database.get("SELECT * FROM users WHERE id = (?)", [id]);
+        const user = await database.get("SELECT * FROM users WHERE id = (?)", [user_id]);
         // verifica se o usuário existe no db
         if(!user) {
             throw new AppError("Usuário não encontrado");
@@ -85,7 +85,7 @@ class UsersController {
             password = ?,
             updated_at = DATETIME('now')
             WHERE id = ?`,
-            [user.name, user.email, user.password, id]
+            [user.name, user.email, user.password, user_id]
         );
 
         //retorne uma mensagem do tipo json vazia para o usuário

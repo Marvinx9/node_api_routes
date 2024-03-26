@@ -6,7 +6,7 @@ class NotesController {
         // pegando os dados inseridos pelo usuário
         const { title, description, tags, links } = request.body;
         // pegando o id do usuário
-        const { user_id } = request.params;
+        const user_id = request.user.id;
 
         // cadastrando as notas e coletando o id da nota gerada
         const note_id = await knex("notes").insert({
@@ -35,7 +35,7 @@ class NotesController {
 
         await knex("tags").insert(tagsInsert);
 
-        response.json();
+        return response.json();
     }
     
     // criando um metodo para mostrar as notas
@@ -67,7 +67,10 @@ class NotesController {
 
     // método para listar as funções
     async index(request, response) {
-        const { title, user_id, tags } = request.query;
+        const { title, tags } = request.query;
+
+        const user_id = request.user.id;
+
         let notes;
         if(tags) {
             // separando as tags de um texto simples para um vetor separado por vírgula
